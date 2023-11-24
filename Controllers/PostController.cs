@@ -1,4 +1,5 @@
-﻿using Blog.DAL.Models;
+﻿using Blog.BL.Managers.Posts;
+using Blog.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.API.Controllers
@@ -7,43 +8,43 @@ namespace Blog.API.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
-        private readonly List<Post> Posts = new()
+        private readonly IPostManager _postManager;
+        public PostController(IPostManager postManager) 
         {
-            new Post { Id = 1, Title = "First Post", Body = "This is the body of the first post.", Likes = 10, AuthorId = "user1" },
-            new Post { Id = 2, Title = "Second Post", Body = "This is the body of the second post.", Likes = 5, AuthorId = "user2" },
-            // Add more posts as needed
-        };
+            _postManager = postManager;
+        }
 
         [HttpGet]
         public ActionResult<IEnumerable<Post>> GetAll()
         {
-            return Ok(Posts);
+            return _postManager.GetAll();
         }
 
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<Post> Get(int id)
+        public ActionResult<Post?> Get(int id)
         {
-            return Ok(Posts[id]);
+            return _postManager.GetById(id);
         }
 
         [HttpPost]
         public ActionResult<Post> Post(Post post)
         {
-            return Ok(post);
+            return _postManager.Add(post);
         }
 
         [HttpPatch]
         [Route("{id}")]
         public ActionResult<Post> Patch(Post post)
         {
-            return Patch(post);
+            return _postManager.Update(post);
         }
 
         [HttpDelete]
         [Route("{id}")]
         public ActionResult Delete(int id)
         {
+            _postManager.Delete(id);
             return Ok();
         }
     }

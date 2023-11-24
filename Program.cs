@@ -1,4 +1,8 @@
+using Blog.BL.Managers.Posts;
 using Blog.DAL.Context;
+using Blog.DAL.Repos.Posts;
+using Blog.DAL.Repos.Tags;
+using Blog.DAL.Repos.Users;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +17,15 @@ builder.Services.AddSwaggerGen();
 // database configuration
 var connectionString = builder.Configuration.GetConnectionString("connStr");
 builder.Services.AddDbContext<BlogDbContext>(options => options.UseSqlServer(connectionString));
+
+// Repos Registration
+builder.Services.AddScoped<IPostRepo, PostRepo>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<ITagRepo, TagRepo>();
+
+// Managers Registration
+builder.Services.AddScoped<IPostManager, PostManager>();
+
 
 var app = builder.Build();
 
